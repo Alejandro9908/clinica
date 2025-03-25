@@ -14,8 +14,13 @@ import java.util.Optional;
 
 @Repository
 public interface EspecialidadRepository extends CrudRepository<Especialidad, Long> {
-    @Query("SELECT new com.grupo2.clinica.dtos.EspecialidadDTO(e.id, e.descripcion, e.eliminado) FROM Especialidad e WHERE e.eliminado = false")
-    Page<EspecialidadDTO> findAllEspecialidades(Pageable pageable);
+    @Query("""
+        SELECT new com.grupo2.clinica.dtos.EspecialidadDTO(e.id, e.descripcion, e.eliminado)
+        FROM Especialidad e
+        WHERE e.eliminado = false
+        AND (:search IS NULL OR LOWER(e.descripcion) LIKE LOWER(CONCAT('%', :search, '%')))
+    """)
+    Page<EspecialidadDTO> findAllEspecialidades(@Param("search") String search, Pageable pageable);
 
     @Query("SELECT new com.grupo2.clinica.dtos.EspecialidadDTO(e.id, e.descripcion, e.eliminado) FROM Especialidad e WHERE e.id = :id AND e.eliminado = false")
     Optional<EspecialidadDTO> findByIdEspecialidad(@Param("id") Long id);

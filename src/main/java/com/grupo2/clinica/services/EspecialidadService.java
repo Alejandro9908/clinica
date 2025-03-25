@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface EspecialidadService {
-    Page<EspecialidadDTO> findAll(Pageable pageable);
+    Page<EspecialidadDTO> findAll(String search, Pageable pageable);
     Optional<EspecialidadDTO> findById(Long id);
     EspecialidadDTO save(EspecialidadDTO especialidad);
     Optional<EspecialidadDTO> update(Long id, EspecialidadDTO especialidad);

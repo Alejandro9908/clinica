@@ -20,8 +20,8 @@ public class EspecialidadServiceImpl implements EspecialidadService {
 
     @Override
     @Transactional (readOnly = true)
-    public Page<EspecialidadDTO> findAll(Pageable pageable) {
-        return especialidadRepository.findAllEspecialidades(pageable);
+    public Page<EspecialidadDTO> findAll(String search, Pageable pageable) {
+        return especialidadRepository.findAllEspecialidades(search, pageable);
     }
 
     @Override

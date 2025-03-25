@@ -15,10 +15,20 @@ import java.util.Optional;
 @Repository
 public interface DoctorRepository extends CrudRepository<Doctor, Long> {
 
-    @Query("SELECT new com.grupo2.clinica.dtos.DoctorDTO" +
-            "(d.id, d.nombre, d.apellido, d.direccion, d.telefono, d.correo, d.estado, d.fechaNacimiento, d.especialidad.id) " +
-            "FROM Doctor d WHERE d.eliminado = false")
-    Page<DoctorDTO> findAllDoctores(Pageable pageable);
+    @Query("""
+        SELECT new com.grupo2.clinica.dtos.DoctorDTO(
+            d.id, d.nombre, d.apellido, d.direccion, d.telefono,
+            d.correo, d.estado, d.fechaNacimiento, d.especialidad.id
+        )
+        FROM Doctor d
+        WHERE d.eliminado = false
+        AND (
+            :search IS NULL OR
+            LOWER(CONCAT(d.nombre, ' ', d.apellido)) LIKE LOWER(CONCAT('%', :search, '%')) OR
+            LOWER(d.correo) LIKE LOWER(CONCAT('%', :search, '%'))
+        )
+    """)
+    Page<DoctorDTO> findAllDoctores(@Param("search") String search, Pageable pageable);
 
     @Query("SELECT new com.grupo2.clinica.dtos.DoctorDTO" +
             "(d.id, d.nombre, d.apellido, d.direccion, d.telefono, d.correo, d.estado, d.fechaNacimiento, d.especialidad.id) " +

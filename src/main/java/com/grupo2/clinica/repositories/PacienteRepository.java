@@ -13,10 +13,21 @@ import java.util.Optional;
 
 @Repository
 public interface PacienteRepository extends CrudRepository<Paciente, Long> {
-    @Query("SELECT new com.grupo2.clinica.dtos.PacienteDTO" +
-            "(p.id, p.nombre, p.apellido, p.direccion, p.telefono, p.correo, p.fechaNacimiento, " +
-            "p.dpi, p.alfabeta, p.estadoCivil, p.genero, p.estado) FROM Paciente p WHERE p.eliminado = false")
-    Page<PacienteDTO> findAllPacientes(Pageable pageable);
+    @Query("""
+        SELECT new com.grupo2.clinica.dtos.PacienteDTO(
+            p.id, p.nombre, p.apellido, p.direccion, p.telefono, p.correo,
+            p.fechaNacimiento, p.dpi, p.alfabeta, p.estadoCivil, p.genero, p.estado
+        )
+        FROM Paciente p
+        WHERE p.eliminado = false
+        AND (
+            :search IS NULL OR
+            LOWER(CONCAT(p.nombre, ' ', p.apellido)) LIKE LOWER(CONCAT('%', :search, '%')) OR
+            LOWER(p.correo) LIKE LOWER(CONCAT('%', :search, '%')) OR
+            p.dpi LIKE CONCAT('%', :search, '%')
+        )
+    """)
+    Page<PacienteDTO> findAllPacientes(@Param("search") String search, Pageable pageable);
 
     @Query("SELECT new com.grupo2.clinica.dtos.PacienteDTO" +
             "(p.id, p.nombre, p.apellido, p.direccion, p.telefono, p.correo, p.fechaNacimiento, " +
