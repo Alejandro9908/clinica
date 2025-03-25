@@ -24,8 +24,8 @@ public class DoctorServiceImpl implements DoctorService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<DoctorDTO> findAll(Pageable pageable) {
-        return doctorRepository.findAllDoctores(pageable);
+    public Page<DoctorDTO> findAll(String search, Pageable pageable) {
+        return doctorRepository.findAllDoctores(search, pageable);
     }
 
     @Override

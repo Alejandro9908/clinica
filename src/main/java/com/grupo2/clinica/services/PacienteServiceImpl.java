@@ -18,8 +18,8 @@ public class PacienteServiceImpl implements PacienteService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<PacienteDTO> findAll(Pageable pageable) {
-        return pacienteRepository.findAllPacientes(pageable);
+    public Page<PacienteDTO> findAll(String search, Pageable pageable) {
+        return pacienteRepository.findAllPacientes(search, pageable);
     }
 
     @Override

@@ -7,7 +7,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.Optional;
 
 public interface PacienteService {
-    Page<PacienteDTO> findAll(Pageable pageable);
+    Page<PacienteDTO> findAll(String search, Pageable pageable);
     Optional<PacienteDTO> findById(Long id);
     PacienteDTO save(PacienteDTO doctorDTO);
     Optional<PacienteDTO> update(Long id, PacienteDTO doctorDTO);

@@ -15,9 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/especialidades")
@@ -30,11 +28,33 @@ public class EspecialidadController {
     public ResponseEntity<ApiResponse<Page<EspecialidadDTO>>> index(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "id") String sortField,
-            @RequestParam(defaultValue = "asc") String sortDirection
+            @RequestParam(defaultValue = "descripcion") String sortField,
+            @RequestParam(defaultValue = "asc") String sortDirection,
+            @RequestParam(required = false) String search
     ) {
+        // Se valida campo de ordenamiento
+        List<String> allowedSortFields = Arrays.asList("id", "descripcion");
+
+        if (!allowedSortFields.contains(sortField)) {
+            return ResponseEntity.badRequest().body(new ApiResponse<>(
+                    400, "Campo de ordenamiento no válido: " + sortField, null
+            ));
+        }
+
+        // Se valida dirección de ordenamiento
+        Sort.Direction direction;
+        try {
+            direction = Sort.Direction.fromString(sortDirection.toUpperCase());
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.badRequest().body(new ApiResponse<>(
+                    400,
+                    "Dirección de ordenamiento no válida: " + sortDirection + ". Usa 'asc' o 'desc'.",
+                    null
+            ));
+        }
+
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(sortDirection), sortField));
-        Page<EspecialidadDTO> especialidades = especialidadService.findAll(pageable);
+        Page<EspecialidadDTO> especialidades = especialidadService.findAll(search, pageable);
 
         return ResponseEntity.ok(new ApiResponse<>(200, "Especialidades obtenidas con éxito", especialidades));
     }

@@ -30,10 +30,11 @@ public class DoctorController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "id") String sortField,
-            @RequestParam(defaultValue = "asc") String sortDirection
+            @RequestParam(defaultValue = "asc") String sortDirection,
+            @RequestParam(required = false) String search
     ) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(sortDirection), sortField));
-        Page<DoctorDTO> doctores = doctorService.findAll(pageable);
+        Page<DoctorDTO> doctores = doctorService.findAll(search, pageable);
         return ResponseEntity.ok(new ApiResponse<>(200, "Lista de doctores obtenida", doctores));
     }
 
